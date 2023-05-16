@@ -1,11 +1,9 @@
 from django.urls import path
-from recipes.views import home, contact, about
+from recipes.views import home
 
 # HTTP REQUEST
 
 
 urlpatterns = [
-    path('', home),  # Home
-    path('about/', about),  # /sobre/
-    path('contact/', contact),  # /contato/
+    path("", home),  # Home
 ]
