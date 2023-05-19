@@ -176,10 +176,16 @@ h6 {
     box-shadow: -8px 8px 18px rgba(0, 0, 0, 0.5);
 }
 
+.recipe-title-container a {
+    text-decoration: none;
+    color: var(--color-primary-dark);
+}
+
 .recipe-title-container {
     padding: var(--spacing-gutter-medium);
     padding-bottom: 2rem;
 }
+
 
 .recipe-author {
     padding: 0 var(--spacing-gutter-medium);
@@ -268,5 +274,5 @@ h6 {
 }
 
 .main-footer a:hover {
-    filter: brightness(.87)
+    color: var(--color-primary-dark-hover);
 }
