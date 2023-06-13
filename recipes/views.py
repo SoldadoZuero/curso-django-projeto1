@@ -2,16 +2,19 @@ from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.db.models import Q
 from django.http.response import Http404
 from utils.pagination import make_pagination
+from django.contrib import messages
 
 from recipes.models import Recipe
 
-PER_PAGES = 9
+import os
+
+PER_PAGE = os.environ.get('PER_PAGE', 6)
 
 
 def home(request):
     recipes = Recipe.objects.filter(is_published=True).order_by('-id')
 
-    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGES)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
 
     return render(
         request,
@@ -29,7 +32,7 @@ def category(request, category_id):
                               category__id=category_id,
                               is_published=True).order_by('-id'))
 
-    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGES)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
 
     return render(
         request,
@@ -60,6 +63,8 @@ def recipe(request, id):
 
 
 def search(request):
+    messages.success(request, 'Hey, you search something that i see!')
+
     search_term = request.GET.get('q', '').strip()
 
     if not search_term:
@@ -73,7 +78,7 @@ def search(request):
         is_published=True,
     ).order_by('-id')
 
-    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGES)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
 
     return render(request, "recipes/pages/search.html", {
         'page_title': f'Search for "{search_term}"',
