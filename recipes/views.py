@@ -2,7 +2,6 @@ from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.db.models import Q
 from django.http.response import Http404
 from utils.pagination import make_pagination
-from django.contrib import messages
 
 from recipes.models import Recipe
 
@@ -63,8 +62,6 @@ def recipe(request, id):
 
 
 def search(request):
-    messages.success(request, 'Hey, you search something that i see!')
-
     search_term = request.GET.get('q', '').strip()
 
     if not search_term:
