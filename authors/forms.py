@@ -37,6 +37,17 @@ class RegisterForm(forms.ModelForm):
         add_placeholder(self.fields['password'], 'Your password')
         add_placeholder(self.fields['password2'], 'Your password')
 
+    first_name = forms.CharField(
+        error_messages={'required': 'Write your first name'},
+        required=True,
+        label='First name'
+    )
+    last_name = forms.CharField(
+        error_messages={'required': 'Write your last name'},
+        required=True,
+        label='Last name'
+    )
+
     password = forms.CharField(
         required=True,
         widget=forms.PasswordInput(),
@@ -68,7 +79,6 @@ class RegisterForm(forms.ModelForm):
         # exclude = ['first_name']
         labels = {
             'username': 'Username',
-            'first_name': 'First name',
             'last_name': 'Last name',
             'email': 'E-mail',
         }
@@ -78,7 +88,7 @@ class RegisterForm(forms.ModelForm):
         error_messages = {
             'username': {
                 'required': 'This field must not be empty',
-            }
+            },
         }
 
     def clean(self):
