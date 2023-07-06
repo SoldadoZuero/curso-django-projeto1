@@ -102,19 +102,32 @@ def dashboard(request):
 
 @login_required(login_url='authors:login', redirect_field_name='next')
 def dashboard_recipe_edit(request, id):
-    recipe = Recipe.objects.get(
+    recipe = Recipe.objects.filter(
         is_published=False,
         author=request.user,
         pk=id,
-    )
+    ).first()
 
     if not recipe:
         raise Http404()
 
     form = AuthorRecipeForm(
-        request.POST or None,
+        data=request.POST or None,
+        files=request.FILES or None,
         instance=recipe
     )
+
+    if form.is_valid():
+        recipe = form.save(commit=False)
+        recipe.author = request.user
+        recipe.preparatio_steps_is_html = False
+        recipe.is_published = False
+
+        recipe.save()
+
+        messages.success(request, 'Sua receita foi salva com sucesso!')
+        return redirect(reverse('authors:dashboard_recipe_edit', args=(id,)))
+
     return render(
         request,
         'authors/pages/dashboard_recipe.html',
@@ -122,3 +135,36 @@ def dashboard_recipe_edit(request, id):
             'form': form,
         }
     )
+
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def dashboard_recipe_new_view(request):
+    form = AuthorRecipeForm()
+    return render(request, 'authors/pages/dashboard_recipe_new.html', {
+        'form': form,
+        'form_action': reverse('authors:dashboard_recipe_new_create')
+    })
+
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def dashboard_recipe_new_create(request):
+    if not request.POST:
+        raise Http404()
+
+    form = AuthorRecipeForm(
+        data=request.POST or None,
+        files=request.FILES or None,
+    )
+
+    if form.is_valid():
+        recipe = form.save(commit=False)
+        recipe.author = request.user
+        recipe.preparatio_steps_is_html = False
+        recipe.is_published = False
+
+        recipe.save()
+
+        messages.success(request, 'Sua receita foi criada com sucesso!')
+        return redirect(reverse('authors:dashboard'))
+
+    return reverse('authors:dashboard_recipe_new')
