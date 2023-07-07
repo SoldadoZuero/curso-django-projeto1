@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from authors.forms.recipe_form import AuthorRecipeForm
 from recipes.models import Recipe
+from django.utils.text import slugify
 
 from .forms import LoginForm, RegisterForm
 
@@ -122,6 +123,7 @@ def dashboard_recipe_edit(request, id):
         recipe.author = request.user
         recipe.preparatio_steps_is_html = False
         recipe.is_published = False
+        recipe.slug = slugify(recipe.title)
 
         recipe.save()
 
@@ -159,8 +161,9 @@ def dashboard_recipe_new_create(request):
     if form.is_valid():
         recipe = form.save(commit=False)
         recipe.author = request.user
-        recipe.preparatio_steps_is_html = False
+        recipe.preparation_steps_is_html = False
         recipe.is_published = False
+        recipe.slug = slugify(recipe.title)
 
         recipe.save()
 
