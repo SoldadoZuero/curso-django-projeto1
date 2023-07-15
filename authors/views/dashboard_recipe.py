@@ -106,8 +106,6 @@ class DashboardRecipeNew(View):
             }
         )
 
-    ###########################################################################
-
     def get(self, request):
 
         form = AuthorRecipeForm()
