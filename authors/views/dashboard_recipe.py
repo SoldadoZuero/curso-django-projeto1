@@ -90,3 +90,48 @@ class DashboardRecipeDelete(DashboardRecipe):
         recipe.delete()
         messages.success(self.request, 'Deleted successfully.')
         return redirect(reverse('authors:dashboard'))
+
+
+@method_decorator(
+    login_required(login_url='authors:login', redirect_field_name='next'),
+    name='dispatch'
+)
+class DashboardRecipeNew(View):
+    def render_recipe(self, form):
+        return render(
+            self.request,
+            'authors/pages/dashboard_recipe.html',
+            context={
+                'form': form,
+            }
+        )
+
+    ###########################################################################
+
+    def get(self, request):
+
+        form = AuthorRecipeForm()
+
+        return self.render_recipe(form)
+
+    def post(self, request):
+        form = AuthorRecipeForm(
+            data=request.POST or None,
+            files=request.FILES or None,
+        )
+
+        if form.is_valid():
+            recipe = form.save(commit=False)
+            recipe.author = request.user
+            recipe.preparatio_steps_is_html = False
+            recipe.is_published = False
+            recipe.slug = slugify(recipe.title)
+
+            recipe.save()
+
+            messages.success(request, 'Sua receita foi criada com sucesso!')
+            return redirect(reverse(
+                'authors:dashboard',
+            ))
+
+        return self.render_recipe(form)
